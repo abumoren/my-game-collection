@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark" data-font-size="medium" data-font-family="Cairo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>MY GAME COLLECTION</title>
+
+  <!-- أيقونة الموقع والتطبيق -->
+  <link rel="icon" type="image/png" href="assets/images/app_icon.png">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ANIMATED SPLASH SCREEN -->
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-content">
+    <div class="splash-logo">🎮</div>
+    <h1 class="splash-title">MY GAME COLLECTION</h1>
+    <p class="splash-sub">أرشيف الألعاب التي ختمتها</p>
+    <div class="splash-loader">
+      <div class="splash-bar"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <button class="menu-toggle-btn" id="collapseBtn" onclick="toggleSidebar()" title="طي/فتح القائمة">☰</button>
+
+    <div class="sidebar-logo">
+      <span class="logo-icon">🎮</span>
+      <h1>MY GAME COLLECTION</h1>
+      <p>أرشيف الألعاب التي ختمتها</p>
+    </div>
+
+    <div class="sidebar-section">المكتبة</div>
+    <div class="nav-item active" onclick="navigate('home')" id="nav-home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">الرئيسية</span>
+    </div>
+    <div class="nav-item" onclick="navigate('all')" id="nav-all">
+      <span class="nav-icon">🎮</span>
+      <span class="nav-label">جميع الألعاب</span>
+    </div>
+    <div class="nav-item" onclick="navigate('stats')" id="nav-stats">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">الإحصائيات</span>
+    </div>
+
+    <div class="sidebar-section">الإدارة</div>
+    <div class="nav-item" onclick="openAddGame()" id="nav-add">
+      <span class="nav-icon">➕</span>
+      <span class="nav-label">إضافة لعبة</span>
+    </div>
+    <div class="nav-item" onclick="openCats()" id="nav-cats">
+      <span class="nav-icon">📁</span>
+      <span class="nav-label">إدارة الأجهزة</span>
+    </div>
+    <div class="nav-item" onclick="openSettings()" id="nav-settings">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-label">الإعدادات</span>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="topbar">
+      <input class="search-input" id="searchInput" type="text" placeholder="ابحث عن لعبة..." oninput="doSearch()">
+      <button class="btn-search" onclick="doSearch()">🔍 بحث</button>
+    </div>
+
+    <div class="page-area">
+
+      <!-- HOME PAGE -->
+      <div class="page active" id="page-home">
+        <div class="home-hero-card glass-shine">
+          <div class="hero-content">
+            <h2 class="hero-title">أرشيف الألعاب التي ختمتها</h2>
+            <p class="hero-subtitle">احتفظ بتاريخ ألعابك وأنشئ مكتبتك الشخصية للألعاب المكتملة.</p>
+            <div class="hero-devices-preview" id="heroDevicesPreview"></div>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <span>🕹️ جميع الأجهزة</span>
+          <span class="badge-total" id="totalGamesBadge">0 لعبة</span>
+        </div>
+        <div class="devices-grid" id="devicesGrid"></div>
+      </div>
+
+      <!-- ALL GAMES PAGE -->
+      <div class="page" id="page-all">
+        <div class="filter-bar">
+          <div class="section-title" style="margin:0;">🎮 جميع الألعاب</div>
+          <select class="select-filter" id="sortAll" onchange="renderAll()">
+            <option value="">⬇️ سنة الإصدار</option>
+            <option value="year-asc">سنة الإصدار ↑</option>
+            <option value="year-desc">سنة الإصدار ↓</option>
+            <option value="name-asc">الاسم أ-ي</option>
+          </select>
+        </div>
+        <div class="games-count" id="allCount" style="margin-bottom:16px;"></div>
+        <div class="games-grid" id="allGamesGrid"></div>
+      </div>
+
+      <!-- STATS PAGE -->
+      <div class="page" id="page-stats">
+        <div class="section-title">📊 الإحصائيات والأجهزة</div>
+        <div class="stats-bars" id="statsBars"></div>
+      </div>
+
+      <!-- DEVICE PAGE -->
+      <div class="page" id="page-device">
+        <div class="filter-bar">
+          <div class="section-title" id="deviceTitle" style="margin:0;">الجهاز</div>
+          <span class="games-count" id="deviceCount"></span>
+        </div>
+        <div class="games-grid" id="deviceGrid"></div>
+      </div>
+
+      <!-- SEARCH RESULTS PAGE -->
+      <div class="page" id="page-search">
+        <div class="section-title">🔍 نتائج البحث</div>
+        <div class="games-count" id="searchCount" style="margin-bottom:16px;"></div>
+        <div class="games-grid" id="searchGrid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" id="m-nav-home" onclick="navigate('home')">
+      <span class="m-nav-icon">🏠</span>
+      <span class="m-nav-label">الرئيسية</span>
+    </button>
+    <button class="mobile-nav-btn" id="m-nav-all" onclick="navigate('all')">
+      <span class="m-nav-icon">🎮</span>
+      <span class="m-nav-label">الألعاب</span>
+    </button>
+    <button class="mobile-nav-btn fab-btn" onclick="openAddGame()">
+      <span class="m-nav-icon">➕</span>
+      <span class="m-nav-label">إضافة</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="openCats()">
+      <span class="m-nav-icon">📁</span>
+      <span class="m-nav-label">الأجهزة</span>
+    </button>
+    <button class="mobile-nav-btn" id="m-nav-stats" onclick="navigate('stats')">
+      <span class="m-nav-icon">📊</span>
+      <span class="m-nav-label">إحصائيات</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="openSettings()">
+      <span class="m-nav-icon">⚙️</span>
+      <span class="m-nav-label">الإعدادات</span>
+    </button>
+  </nav>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- MODAL: ADD/EDIT GAME -->
+<div class="modal-overlay" id="modalGame">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="gameModalTitle">➕ إضافة لعبة</div>
+      <button class="btn-close" onclick="closeModal('modalGame')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">اسم اللعبة</label>
+      <input class="form-control" id="gameName" type="text" placeholder="مثال: God of War">
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">سنة الإصدار</label>
+        <input class="form-control" id="gameYear" type="number" placeholder="2005">
+      </div>
+      <div class="form-group">
+        <label class="form-label">الجهاز</label>
+        <select class="form-control" id="gameCat"></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">صورة الغلاف (استرداد Base64 أو رابط)</label>
+      <div class="input-import-group" style="display: flex; gap: 6px;">
+        <input class="form-control" id="gameCover" type="text" placeholder="رابط صورة أو استورد كـ Base64" style="flex: 1;">
+        <button class="btn btn-secondary" onclick="document.getElementById('imageFileInput').click()" type="button">
+          📁 استرداد Base64
+        </button>
+        <input type="file" id="imageFileInput" accept="image/*" style="display:none" onchange="handleImageImport(this)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modalGame')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveGame()">💾 حفظ اللعبة</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CATEGORIES -->
+<div class="modal-overlay" id="modalCats">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📁 إدارة الأجهزة</div>
+      <button class="btn-close" onclick="closeCatsModal()">✕</button>
+    </div>
+    <div class="cat-input-container">
+      <div class="cat-input-group">
+        <input class="form-control" id="newCatName" type="text" placeholder="اسم الجهاز الجديد...">
+        <button class="btn btn-primary" onclick="addCat()">➕ إضافة جهاز</button>
+      </div>
+      <div class="cat-img-input-group">
+        <input class="form-control" id="newCatImg" type="text" placeholder="رابط أو Base64 صورة الجهاز">
+        <button class="btn btn-secondary" onclick="document.getElementById('catImgFileInput').click()">📁 استرداد Base64</button>
+        <input type="file" id="catImgFileInput" accept="image/*" style="display:none" onchange="handleCatImageImport(this)">
+      </div>
+    </div>
+    <div id="catList"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveCatsAndClose()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM DELETE DEVICE -->
+<div class="modal-overlay" id="modalConfirmDelete">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">⚠️ تأكيد الحذف</div>
+      <button class="btn-close" onclick="closeModal('modalConfirmDelete')">✕</button>
+    </div>
+    <div style="text-align:center; padding: 10px 0 20px;">
+      <p style="font-size:1.1rem; font-weight:700;">هل أنت متأكد من حذف الجهاز؟</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-secondary" onclick="closeModal('modalConfirmDelete')">إلغاء</button>
+      <button class="btn btn-danger" onclick="executeDeleteCat()">حسناً (حذف)</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM CLEAR ALL DATA -->
+<div class="modal-overlay" id="modalConfirmClearData">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">🗑️ مسح كل البيانات</div>
+      <button class="btn-close" onclick="closeModal('modalConfirmClearData')">✕</button>
+    </div>
+    <div style="text-align:center; padding: 15px 0 20px;">
+      <p style="font-size:1.1rem; font-weight:700; color:var(--text-primary);">هل أنت متأكد من مسح جميع البيانات؟</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center; gap: 12px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalConfirmClearData')" style="min-width: 90px;">لا</button>
+      <button class="btn btn-danger" onclick="executeClearAllData(); closeModal('modalConfirmClearData');" style="min-width: 90px;">نعم</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SETTINGS -->
+<div class="modal-overlay" id="modalSettings">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ الإعدادات</div>
+      <button class="btn-close" onclick="closeModal('modalSettings')">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">نمط واجهة الثيم</label>
+        <select class="form-control" id="themeSelect" onchange="toggleTheme(this.value)">
+          <option value="dark">🌙 وضع داكن</option>
+          <option value="light">☀️ وضع نهاري</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">حجم الخط</label>
+        <select class="form-control" id="fontSizeSelect" onchange="changeFontSize(this.value)">
+          <option value="small">صغير</option>
+          <option value="medium">متوسط</option>
+          <option value="large">كبير</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">نوع الخط العربي</label>
+        <select class="form-control" id="fontFamilySelect" onchange="changeFontFamily(this.value)">
+          <option value="Cairo">خط القاهرة (Cairo)</option>
+          <option value="Tajawal">خط تجوال (Tajawal)</option>
+          <option value="Almarai">خط المراعي (Almarai)</option>
+          <option value="NotoNaskhArabic">خط نسخ عربي (Noto Naskh)</option>
+        </select>
+      </div>
+
+      <hr style="border:none; border-top:1px solid var(--border);">
+
+      <button class="btn btn-secondary" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('importInput').click()">📥 استيراد نسخة احتياطية</button>
+      <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(this)">
+      
+      <button class="btn btn-secondary" onclick="openAbout()">ℹ️ معلومات التطبيق</button>
+
+      <hr style="border:none; border-top:1px solid var(--border);">
+      <button class="btn btn-danger" onclick="openClearDataModal()">🗑️ مسح كل البيانات</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ABOUT APP -->
+<div class="modal-overlay" id="modalAbout">
+  <div class="modal modal-sm" style="text-align: center;">
+    <div class="modal-header">
+      <div class="modal-title">ℹ️ معلومات التطبيق</div>
+      <button class="btn-close" onclick="closeModal('modalAbout')">✕</button>
+    </div>
+    <div style="padding: 10px 0;">
+      <div style="font-size: 2.8rem; margin-bottom: 8px;">🎮</div>
+      <h3 style="font-size: 1.3rem; font-weight: 900; color: var(--accent);">MY GAME COLLECTION</h3>
+      <p style="font-size: 0.95rem; font-weight: 700; color: var(--text-secondary); margin-top: 6px;">الإصدار 1.0.1</p>
+      
+      <div style="background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin: 14px 0; text-align: center;">
+        <p style="font-size: 0.9rem; font-weight: 800; color: var(--text-primary);">تصميم وإدارة</p>
+        <p style="font-size: 1.05rem; font-weight: 900; color: var(--accent); margin-top: 2px;">عباس ابراهيم سلمان</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">جميع الحقوق محفوظة © 2026</p>
+      </div>
+
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 10px; line-height: 1.7; text-align: justify;">
+        منصة احترافية ومتكاملة مخصصة لإدارة وأرشفت مكتبتك الشخصية للألعاب الإلكترونية التي قمت بختمها على مختلف الأجهزة والمنصات، مع إمكانية تتبع الإحصائيات الشاملة وتخصيص تجربة المستخدم بشكل كامل.
+      </p>
+    </div>
+    <div class="modal-footer" style="justify-content: center;">
+      <button class="btn btn-primary" onclick="closeModal('modalAbout')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="assets/js/app.js"></script>
+</body>
+</html>
